@@ -2,6 +2,7 @@
 set -eo pipefail
 
 backup_tool="gsutil"
+backup_options="rsync -r"
 
 # verify variables
 if [ -z "$GS_ACCESS_KEY" -o -z "$GS_SECRET_KEY" -o -z "$GS_URL" -o -z "$MONGO_URL" -o -z "$MONGO_USER" -o -z "$MONGO_PASSWORD" ]; then
@@ -20,7 +21,7 @@ $backup_tool ls "gs://$GS_URL" > /dev/null
    echo "CRON_SCHEDULE set to default ('$CRON_SCHEDULE')"
 
 # add a cron job
-echo "$CRON_SCHEDULE root rm -rf /tmp/dump && mongodump -h '$MONGO_URL' -u '$MONGO_USER' -p '$MONGO_PASSWORD' --out /tmp/dump/ --gzip >> /var/log/cron.log 2>&1 && $backup_tool mv /tmp/dump gs://$GS_URL/ >> /var/log/cron.log 2>&1 && rm -rf /tmp/dump" >> /etc/crontab
+echo "$CRON_SCHEDULE root rm -rf /tmp/dump && mongodump -h '$MONGO_URL' -u '$MONGO_USER' -p '$MONGO_PASSWORD' --out /tmp/dump/ --gzip >> /var/log/cron.log 2>&1 && $backup_tool $backup_options /tmp/dump gs://$GS_URL/ >> /var/log/cron.log 2>&1 && rm -rf /tmp/dump" >> /etc/crontab
 crontab /etc/crontab
 
 exec "$@"
