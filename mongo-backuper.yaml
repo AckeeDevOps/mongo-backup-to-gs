@@ -1,0 +1,52 @@
+#
+# MongoDB backuper
+#
+# Set proper MONGO_PASSWORD, GS_ACCESS_KEY, GS_SECRET_KEY, GS_URL
+#
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mongo-APP_NAME-backuper
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo-APP_NAME-backuper
+        role: client
+        tier: backend
+    spec:
+      containers:
+      - name: mongo-APP_NAME-backuper
+        image: ackee/mongo-backup-to-gs:latest
+        env:
+        # TimeZone for proper cron scheduling execution
+        - name: TZ
+          value: "Europe/Prague"
+        # mongo host container domain name
+        - name: MONGO_URL
+          value: "mongo"
+        - name: MONGO_USER
+          value: "root"
+        - name: MONGO_PASSWORD
+          value: "ENTER_PASSWORD"
+        # Google Cloud Storage credentials
+        - name: GS_ACCESS_KEY
+          value: "ENTER_GS_ACCESS_KEY"
+        - name: GS_SECRET_KEY
+          value: "ENTER_GS_SECRET_KEY"
+        - name: GS_URL
+          value: "bucket-name/PROJECT_NAME/APP_NAME/ENV_NAME/mongo"
+        # You might want to tweak the resources a bit according to the size of your db
+        resources:
+          requests:
+            cpu: 5m
+            memory: 16Mi
+          limits: 
+            cpu: 15m
+            memory: 64Mi
+        ports:
+          - containerPort: 27017
+      # allow to run only on certain cluster node
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
