@@ -2,7 +2,7 @@
 set -eo pipefail
 
 backup_tool="gsutil"
-backup_options="rsync -r"
+backup_options="-m rsync -r"
 
 # verify variables
 if [ -z "$GS_ACCESS_KEY" -o -z "$GS_SECRET_KEY" -o -z "$GS_URL" -o -z "$MONGO_URL" -o -z "$MONGO_USER" -o -z "$MONGO_PASSWORD" ]; then
