@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: mongo-APP_NAME-backuper
-        image: ackee/mongo-backup-to-gs:latest
+        image: ackee/mongo-backup-to-gs:gcredentials
         env:
         # TimeZone for proper cron scheduling execution
         - name: TZ
@@ -30,11 +30,6 @@ spec:
           value: "root"
         - name: MONGO_PASSWORD
           value: "ENTER_PASSWORD"
-        # Google Cloud Storage credentials
-        - name: GS_ACCESS_KEY
-          value: "ENTER_GS_ACCESS_KEY"
-        - name: GS_SECRET_KEY
-          value: "ENTER_GS_SECRET_KEY"
         - name: GS_URL
           value: "bucket-name/PROJECT_NAME/APP_NAME/ENV_NAME/mongo"
         # You might want to tweak the resources a bit according to the size of your db

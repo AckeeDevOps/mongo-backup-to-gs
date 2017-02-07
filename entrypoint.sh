@@ -1,17 +1,14 @@
 #!/bin/bash
 set -eo pipefail
 
-backup_tool="gsutil"
+backup_tool="/google-cloud-sdk/gsutil"
 backup_options="-m rsync -r"
 
 # verify variables
-if [ -z "$GS_ACCESS_KEY" -o -z "$GS_SECRET_KEY" -o -z "$GS_URL" -o -z "$MONGO_URL" -o -z "$MONGO_USER" -o -z "$MONGO_PASSWORD" ]; then
-	echo >&2 'Backup information is not complete. You need to specify GS_ACCESS_KEY, GS_SECRET_KEY, GS_URL, MONGO_URL, MONGO_USER, MONGO_PASSWORD. No backups, no fun.'
+if [ -z "$GS_URL" -o -z "$MONGO_URL" -o -z "$MONGO_USER" -o -z "$MONGO_PASSWORD" ]; then
+	echo >&2 'Backup information is not complete. You need to specify GS_URL, MONGO_URL, MONGO_USER, MONGO_PASSWORD. No backups, no fun.'
 	exit 1
 fi
-
-# set gs config
-echo -e "[Credentials]\ngs_access_key_id = $GS_ACCESS_KEY\ngs_secret_access_key = $GS_SECRET_KEY" > /root/.boto
 
 # verify gs config - ls bucket
 $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
