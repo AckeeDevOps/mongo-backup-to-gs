@@ -21,7 +21,7 @@ $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
    echo "CRON_SCHEDULE set to default ('$CRON_SCHEDULE')"
 
 # add a cron job
-echo "$CRON_SCHEDULE root mkdir -p /tmp/backup/ ; rm -rf /tmp/backup/* && mongodump -h '$MONGO_URL' -u '$MONGO_USER' -p '$MONGO_PASSWORD' --out /tmp/backup/ >> /var/log/cron.log 2>&1 && find /tmp/backup -type f -exec gzip --fast {} \; && find /tmp/backup -type f -size +4G -exec split {} {}.part- ; rm {} \; && $backup_tool $backup_options /tmp/backup/ gs://$GS_URL/ >> /var/log/cron.log 2>&1" >> /etc/crontab
+echo "$CRON_SCHEDULE root mkdir -p /tmp/backup/ ; rm -rf /tmp/backup/* && mongodump -h '$MONGO_URL' -u '$MONGO_USER' -p '$MONGO_PASSWORD' --out /tmp/backup/ >> /var/log/cron.log 2>&1 && find /tmp/backup -type f -exec gzip --fast {} \; && find /tmp/backup -type f -size +4G -exec split -b 4G {} {}.part- ;\ && find /tmp/backup -type f -name '*.gz' -size +4G -exec rm {} \; && $backup_tool $backup_options /tmp/backup/ gs://$GS_URL/ >> /var/log/cron.log 2>&1" >> /etc/crontab
 crontab /etc/crontab
 
 exec "$@"
