@@ -4,6 +4,7 @@ FROM mongo:latest
 RUN apt-get update && apt-get install -y python python-pip cron && easy_install -U pip && pip2 install gsutil && rm -rf /var/lib/apt/lists/*
 
 # entrypoint
+COPY backup.sh /opt/backup.sh
 COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
