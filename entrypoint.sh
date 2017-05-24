@@ -21,7 +21,7 @@ $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
    echo "CRON_SCHEDULE set to default ('$CRON_SCHEDULE')"
 
 # add a cron job
-echo "$CRON_SCHEDULE /bin/bash /opt/backup.sh  >> /var/log/cron.log 2>&1" >> /etc/crontab
-crontab /etc/crontab
+echo "$CRON_SCHEDULE /opt/backup.sh  >> /var/log/cron.log 2>&1" >> /etc/crontabFAKE
+crontab /etc/crontabFAKE
 
 exec "$@"
