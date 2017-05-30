@@ -20,4 +20,6 @@ $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
 [[ -z "$CRON_SCHEDULE" ]] && CRON_SCHEDULE='0 2 * * *' && \
    echo "CRON_SCHEDULE set to default ('$CRON_SCHEDULE')"
 
+sed -i "s/__CRON_SCHEDULE/$CRON_SCHEDULE/" /etc/cron.d/crontab
+
 exec "$@"
