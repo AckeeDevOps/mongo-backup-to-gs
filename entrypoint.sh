@@ -22,6 +22,4 @@ $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
 
 sed -i "s/__CRON_SCHEDULE/$CRON_SCHEDULE/" /etc/cron.d/crontab
 
-mkdir -p /mnt/bucket && gcsfuse --implicit-dirs "$GS_URL" /mnt/bucket
-
 exec "$@"
