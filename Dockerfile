@@ -5,8 +5,6 @@ RUN apt-get update && apt-get install -y python python-pip cron && easy_install 
 
 # entrypoint
 COPY entrypoint.sh /entrypoint.sh
-ADD crontab /etc/cron.d/crontab
-RUN chmod 0644 /etc/cron.d/crontab
 
 ENTRYPOINT ["/entrypoint.sh"]
 
