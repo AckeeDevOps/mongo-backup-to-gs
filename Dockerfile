@@ -24,5 +24,3 @@ ENV PATH /google-cloud-sdk/bin:$PATH
 COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-CMD touch /var/log/cron.log && cron && tail -f /var/log/cron.log
