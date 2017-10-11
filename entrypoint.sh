@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-backup_tool="gsutil"
+backup_tool="/google-cloud-sdk/bin/gsutil"
 backup_options="-m rsync -r"
 
 # verify variables
