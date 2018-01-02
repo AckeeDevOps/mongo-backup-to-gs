@@ -1,4 +1,4 @@
-FROM mongo:latest
+FROM mongo:3.4
 
 # backups to Google Storage
 RUN    apt-get update \

@@ -10,6 +10,23 @@ if [ -z "$GS_URL" -o -z "$MONGO_URL" ]; then
 	exit 1
 fi
 
+# set mongo user in connection string
+MONGO_USER_CON=""
+if [ ! -z "$MONGO_USER" ]; then
+  MONGO_USER_CON="-u $MONGO_USER"
+fi
+
+# set mongo password in connection string
+MONGO_PASS_CON=""
+if [ ! -z "$MONGO_PASSWORD" ]; then
+  MONGO_PASS_CON="-p$MONGO_PASSWORD"
+fi
+
+echo "$MONGO_URL:$MONGO_PORT/admin $MONGO_USER_CON $MONGO_PASS_CON"
+
+# verify mongo connection
+mongo "$MONGO_URL:${MONGO_PORT}/admin" $MONGO_USER_CON $MONGO_PASS_CON --eval "db.stats()" >> /dev/null
+
 # verify gs config - ls bucket
 $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
 
