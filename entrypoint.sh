@@ -31,7 +31,7 @@ fi
 echo "${MONGO_URL}${MONGO_PORT_CON}/admin" 
 
 # verify mongo connection
-mongo "${MONGO_URL}${MONGO_PORT_CON}/admin" $MONGO_USER_CON $MONGO_PASS_CON --eval "db.stats()" >> /dev/null
+mongo --host "${MONGO_URL}${MONGO_PORT_CON}/admin" $MONGO_USER_CON $MONGO_PASS_CON --eval "db.stats()" >> /dev/null
 echo "DB connection verified."
 
 # verify gs config - ls bucket
