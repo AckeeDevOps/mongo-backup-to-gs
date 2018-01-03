@@ -22,13 +22,19 @@ if [ ! -z "$MONGO_PASSWORD" ]; then
   MONGO_PASS_CON="-p$MONGO_PASSWORD"
 fi
 
-echo "$MONGO_URL:$MONGO_PORT/admin $MONGO_USER_CON $MONGO_PASS_CON"
+# set default mongo port, if it's not set
+MONGO_PORT_CON=""
+if [ ! -z "$MONGO_PORT" ]; then
+  MONGO_PORT_CON=":27017"
+fi
 
 # verify mongo connection
-mongo "$MONGO_URL:${MONGO_PORT}/admin" $MONGO_USER_CON $MONGO_PASS_CON --eval "db.stats()" >> /dev/null
+mongo "${MONGO_URL}${MONGO_PORT_CON}/admin" $MONGO_USER_CON $MONGO_PASS_CON --eval "db.stats()" >> /dev/null
+echo "DB connection verified."
 
 # verify gs config - ls bucket
 $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
+echo "Google storage bucket access verified."
 
 # set cron schedule TODO: check if the string is valid (five or six values separated by white space)
 [[ -z "$CRON_SCHEDULE" ]] && CRON_SCHEDULE='0 2 * * *' && \
