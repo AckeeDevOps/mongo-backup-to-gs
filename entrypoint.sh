@@ -25,8 +25,10 @@ fi
 # set default mongo port, if it's not set
 MONGO_PORT_CON=""
 if [ ! -z "$MONGO_PORT" ]; then
-  MONGO_PORT_CON=":27017"
+  MONGO_PORT_CON=":${MONGO_PORT}"
 fi
+
+echo "${MONGO_URL}${MONGO_PORT_CON}/admin" 
 
 # verify mongo connection
 mongo "${MONGO_URL}${MONGO_PORT_CON}/admin" $MONGO_USER_CON $MONGO_PASS_CON --eval "db.stats()" >> /dev/null
