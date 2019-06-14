@@ -28,18 +28,11 @@ if [ ! -z "$MONGO_PORT" ]; then
   MONGO_PORT_CON=":${MONGO_PORT}"
 fi
 
-# verify mongo connection
-#mongo --host "${MONGO_URL}${MONGO_PORT_CON}/admin" $MONGO_USER_CON $MONGO_PASS_CON --eval "db.stats()" >> /dev/null
-#echo "DB connection verified."
-
 # verify gs config - ls bucket
 $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
 echo "Google storage bucket access verified."
 
-# set cron schedule TODO: check if the string is valid (five or six values separated by white space)
-[[ -z "$CRON_SCHEDULE" ]] && CRON_SCHEDULE='0 2 * * *' && \
-   echo "CRON_SCHEDULE set to default ('$CRON_SCHEDULE')"
-
-echo "$CRON_SCHEDULE root mkdir -p /tmp/backup/ ; rm -rf /tmp/backup/* && mongodump -h '$MONGO_URL' $MONGO_USER_CON $MONGO_PASS_CON --out /tmp/backup/ >> /var/log/cron.log 2>&1 && find /tmp/backup -type f ! -name '*.gz' -exec gzip --fast {} >> /var/log/cron.log 2>&1 \;  && find /tmp/backup -type f -size +4G -exec split -b 4G {} {}.part- >> /var/log/cron.log 2>&1 \;  && find /tmp/backup -type f -name '*.gz' -size +4G -exec rm {} >> /var/log/cron.log 2>&1 \;  && $backup_tool $backup_options /tmp/backup/ gs://$GS_URL/ >> /var/log/cron.log 2>&1" >> /etc/crontab
-
-exec "$@"
+mkdir -p /tmp/backup/
+rm -rf -- /tmp/backup/* 
+mongodump -h "$MONGO_URL" -u "$MONGO_USER" -p "$MONGO_PASSWORD" --out /tmp/backup/dump --gzip 
+$backup_tool $backup_options /tmp/backup/ gs://$GS_URL/ 
