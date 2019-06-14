@@ -5,17 +5,32 @@ backup_tool="/google-cloud-sdk/bin/gsutil"
 backup_options="-m rsync -r"
 
 # verify variables
-if [ -z "$GS_URL" -o -z "$MONGO_URL" -o -z "$MONGO_USER" -o -z "$MONGO_PASSWORD" ]; then
-	echo >&2 'Backup information is not complete. You need to specify GS_URL, MONGO_URL, MONGO_USER, MONGO_PASSWORD. No backups, no fun.'
+if [ -z "$GS_URL" -o -z "$MONGO_URL" ]; then
+	echo >&2 'Backup information is not complete. You need to specify GS_URL, MONGO_URL. No backups, no fun.'
 	exit 1
+fi
+
+# set mongo user in connection string
+MONGO_USER_CON=""
+if [ ! -z "$MONGO_USER" ]; then
+  MONGO_USER_CON="-u $MONGO_USER"
+fi
+
+# set mongo password in connection string
+MONGO_PASS_CON=""
+if [ ! -z "$MONGO_PASSWORD" ]; then
+  MONGO_PASS_CON="-p$MONGO_PASSWORD"
+fi
+
+# set default mongo port, if it's not set
+MONGO_PORT_CON=""
+if [ ! -z "$MONGO_PORT" ]; then
+  MONGO_PORT_CON=":${MONGO_PORT}"
 fi
 
 # verify gs config - ls bucket
 $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
-
-# set cron schedule TODO: check if the string is valid (five or six values separated by white space)
-[[ -z "$CRON_SCHEDULE" ]] && CRON_SCHEDULE='0 2 * * *' && \
-   echo "CRON_SCHEDULE set to default ('$CRON_SCHEDULE')"
+echo "Google storage bucket access verified."
 
 mkdir -p /tmp/backup/
 rm -rf -- /tmp/backup/* 
