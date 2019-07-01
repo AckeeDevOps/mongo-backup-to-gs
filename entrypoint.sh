@@ -28,11 +28,16 @@ if [ ! -z "$MONGO_PORT" ]; then
   MONGO_PORT_CON=":${MONGO_PORT}"
 fi
 
+MONGO_DUMP_OPLOG=""
+if [ ! -z "$MONGO_DUMP_OPLOG" ]; then
+  MONGO_DUMP_OPLOG="--oplog"
+fi
+
 # verify gs config - ls bucket
 $backup_tool ls "gs://${GS_URL%%/*}" > /dev/null
 echo "Google storage bucket access verified."
 
 mkdir -p /tmp/backup/
 rm -rf -- /tmp/backup/* 
-mongodump -h "$MONGO_URL" -u "$MONGO_USER" -p "$MONGO_PASSWORD" --out /tmp/backup/dump --gzip 
+mongodump -h "$MONGO_URL" -u "$MONGO_USER" -p "$MONGO_PASSWORD" --out /tmp/backup/dump --gzip $MONGO_DUMP_OPLOG
 $backup_tool $backup_options /tmp/backup/ gs://$GS_URL/ 
