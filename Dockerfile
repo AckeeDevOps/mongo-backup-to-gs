@@ -2,7 +2,7 @@ FROM mongo:3.4
 
 # backups to Google Storage
 RUN    apt-get update \
-    && apt-get install -y wget unzip python cron \
+    && apt-get install -y wget unzip python \
     && rm -rf /var/lib/apt/lists/*
 
 # download google cloud-sdk
